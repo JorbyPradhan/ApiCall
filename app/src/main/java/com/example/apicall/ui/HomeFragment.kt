@@ -1,16 +1,13 @@
 package com.example.apicall.ui
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.os.Handler
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.apicall.R
 import com.example.apicall.adapter.PostAdapter
@@ -22,21 +19,21 @@ import org.kodein.di.android.x.kodein
 import org.kodein.di.generic.instance
 import java.lang.Exception
 
-class HomeFragment : Fragment(),KodeinAware,SwipeRefreshLayout.OnRefreshListener{
+class HomeFragment : Fragment(), KodeinAware, SwipeRefreshLayout.OnRefreshListener {
     override val kodein by kodein()
 
-    private companion object{
+    private companion object {
         const val ITEM_COUNT = 10
     }
 
     private lateinit var viewModel: HomeViewModel
-    private var isLoad  = false
-    private var isLast  = false
-    private var count =0
+    private var isLoad = false
+    private var isLast = false
+    private var count = 0
     private var currentItem = PAGE_START
     private val factory: HomeViewModelFactory by instance()
     private lateinit var postAdapter: PostAdapter
-    private lateinit var postList : ArrayList<Post>
+    private lateinit var postList: ArrayList<Post>
 
 
     override fun onCreateView(
@@ -48,7 +45,7 @@ class HomeFragment : Fragment(),KodeinAware,SwipeRefreshLayout.OnRefreshListener
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this,factory).get(HomeViewModel::class.java)
+        viewModel = ViewModelProvider(this, factory).get(HomeViewModel::class.java)
         postList = ArrayList()
         //paginationList = ArrayList()
         swipeRefresh.setOnRefreshListener(this)
@@ -61,8 +58,10 @@ class HomeFragment : Fragment(),KodeinAware,SwipeRefreshLayout.OnRefreshListener
         }
         bindApi()
 
+
+        //when app scroll next 10 page open
         rec_flow.run {
-            rec_flow.addOnScrollListener(object : PaginationListener(layoutManager){
+            rec_flow.addOnScrollListener(object : PaginationListener(layoutManager) {
                 override fun loadMoreItems() {
                     isLoad = true
                     currentItem++
@@ -74,11 +73,13 @@ class HomeFragment : Fragment(),KodeinAware,SwipeRefreshLayout.OnRefreshListener
                 }
 
                 override fun isLoading(): Boolean {
-                   return isLoad
+                    return isLoad
                 }
 
             })
         }
+
+
     }
 
     private fun bindApi() {
@@ -86,16 +87,17 @@ class HomeFragment : Fragment(),KodeinAware,SwipeRefreshLayout.OnRefreshListener
         viewModel.responseLiveData.observe(viewLifecycleOwner, {
             postList.addAll(it)
             rec_flow.visibility = View.VISIBLE
+            progress.visibility = View.GONE
             loadNextList()
         })
 
     }
 
-    private fun loadNextList(){
+    private fun loadNextList() {
         try {
-            val paginationList : ArrayList<Post> = ArrayList()
+            val paginationList: ArrayList<Post> = ArrayList()
             Handler().postDelayed({
-                for (i in 0 until ITEM_COUNT){
+                for (i in 0 until ITEM_COUNT) {
                     paginationList.add(postList[count])
                     count++
                 }
@@ -104,16 +106,16 @@ class HomeFragment : Fragment(),KodeinAware,SwipeRefreshLayout.OnRefreshListener
                 swipeRefresh.isRefreshing = false
 
 
-                if (currentItem < ITEM_COUNT){
+                if (currentItem < ITEM_COUNT) {
                     postAdapter.addLoading()
-                }else{
+                } else {
                     isLast = true
                 }
                 isLoad = false
 
-            },1500)
+            }, 1500)
 
-        }catch (e : Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
