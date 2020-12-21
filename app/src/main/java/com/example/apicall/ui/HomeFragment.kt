@@ -19,7 +19,7 @@ import org.kodein.di.android.x.kodein
 import org.kodein.di.generic.instance
 import java.lang.Exception
 
-class HomeFragment : Fragment(), KodeinAware, SwipeRefreshLayout.OnRefreshListener {
+class HomeFragment : Fragment(),KodeinAware, SwipeRefreshLayout.OnRefreshListener {
     override val kodein by kodein()
 
     private companion object {
@@ -32,6 +32,7 @@ class HomeFragment : Fragment(), KodeinAware, SwipeRefreshLayout.OnRefreshListen
     private var count = 0
     private var currentItem = PAGE_START
     private val factory: HomeViewModelFactory by instance()
+    //private lateinit var factory: HomeViewModelFactory
     private lateinit var postAdapter: PostAdapter
     private lateinit var postList: ArrayList<Post>
 
@@ -45,6 +46,7 @@ class HomeFragment : Fragment(), KodeinAware, SwipeRefreshLayout.OnRefreshListen
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+      //  factory = HomeViewModelFactory(PostRepository(Api()))
         viewModel = ViewModelProvider(this, factory).get(HomeViewModel::class.java)
         postList = ArrayList()
         //paginationList = ArrayList()

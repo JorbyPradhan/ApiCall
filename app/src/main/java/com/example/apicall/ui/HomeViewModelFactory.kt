@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.apicall.data.repository.PostRepository
 
+@Suppress("UNCHECKED_CAST")
 class HomeViewModelFactory(
     private val repo : PostRepository
 ) : ViewModelProvider.NewInstanceFactory() {

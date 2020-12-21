@@ -1,6 +1,6 @@
 package com.example.apicall
 
-import android.app.Application
+import androidx.multidex.MultiDexApplication
 import com.example.apicall.data.network.Api
 import com.example.apicall.data.network.NetworkConnectionInterceptor
 import com.example.apicall.data.repository.PostRepository
@@ -13,14 +13,16 @@ import org.kodein.di.generic.instance
 import org.kodein.di.generic.provider
 import org.kodein.di.generic.singleton
 
-class BaseApplication : Application(),KodeinAware{
+class BaseApplication : MultiDexApplication(),KodeinAware{
+
     override val kodein = Kodein.lazy {
         import(androidXModule(this@BaseApplication))
 
         bind() from singleton {
             NetworkConnectionInterceptor(instance())
         }
-        bind() from singleton { Api(instance()) }
+        bind() from singleton { Api() }
+      //  bind() from singleton { Api(instance()) }
         bind() from singleton { PostRepository(instance()) }
         bind() from provider { HomeViewModelFactory(instance()) }
     }
